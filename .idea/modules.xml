@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/note.iml" filepath="$PROJECT_DIR$/note.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ssh01/ssh01.iml" filepath="$PROJECT_DIR$/ssh01/ssh01.iml" />
     </modules>
   </component>
 </project>
