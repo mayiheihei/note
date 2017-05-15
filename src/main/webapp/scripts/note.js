@@ -34,6 +34,12 @@ function showNotesAction() {
     li.parent().find("a").removeClass("checked");
     li.children("a").addClass("checked");
     var id = li.data("notebookId");
+
+    //选定笔记本之后，在右边笔记列表的UL上绑定 notebookId
+    var ul = $('#pc_part_2 ul');
+    ul.data('notebookId', id);
+
+    // console.log("notebookId:-----------------"+id);
     var url = "note/list.do";
     var data = {
         notebookId: id
@@ -48,6 +54,66 @@ function showNotesAction() {
             alert(result.message);
         }
 
+    });
+}
+
+//打开新增笔记对话框
+function openAddNoteDialog() {
+    //获取当前笔记本的ID, 如果没有, 则不能打开对话框
+    var ul = $('#pc_part_2 ul');
+    var id = ul.data('notebookId');
+    // console.log("我是id-------"+id);
+    //alert('我是id------'+id);
+    if (!id) {
+        alert("先选定笔记本!");
+        return;
+    }
+
+    var url = "alert/alert_note.html";
+    $("#can").load(url);
+    $(".opacity_bg").show();
+}
+
+//新增笔记
+function addNoteAction() {
+    var title = $("#input_note").val();
+    if (title == "" || title.replace(/\s/g, "") == "") {
+        return;
+    }
+    var ul = $('#pc_part_2 ul');
+    var id = ul.data('notebookId');
+    if (!id) {
+        return;
+    }
+    var url = "note/add.do";
+    var data = {userId: getCookie("userId"), notebookId: id, title: title};
+    $.post(url, data, function (result) {
+        if (result.state == SUCCESS) {
+            var note = result.data;
+
+            //TODO 这块内容哪里用了？
+            // $("#input_note_title").data('note',note);
+
+            //添加成功后把标题赋值到标题输入框位置
+            $("#input_note_title").val(note.title);
+
+            //因为只有标题，这里类似清空笔记body内容。
+            um.setContent(note.body);
+
+            //更新笔记列表区域
+            var ul = $('#pc_part_2 ul');
+            li = noteTemplate.replace(
+                '[title]', note.title);
+            li = $(li);
+            ul.prepend(li);
+            //更新选定效果
+            ul.find('a').removeClass('checked');
+            li.find('a').addClass('checked');
+            //关闭对话框
+            closeDialog();
+        } else {
+            alert(result.message);
+        }
     });
 }
 
@@ -126,20 +192,20 @@ function updateNoteAction() {
             console.log("Update Success!");
             //修改客户端保存的笔记信息属性
             /*note.title = title;
-            note.body = body;*/
+             note.body = body;*/
             //找到笔记本列表中的全部笔记信息,修改其title
             //list: 包含笔记标题的全部li元素
             var list = $('#pc_part_2 ul li');
 
-            list.each(function(){
+            list.each(function () {
                 //li 是 dom 对象, 是每个li元素
                 var li = $(this);//这样就转换为jQuery元素了
                 console.log(li);
                 //取出li元素上绑定的 noteId
-                var id=li.data('noteId');
+                var id = li.data('noteId');
                 //如果当前的笔记ID与li上的笔记ID一致
                 //找到当正在选定的 笔记
-                if(id==noteId){
+                if (id == noteId) {
                     //替换笔记的标题
                     var newLi = noteTemplate.replace('[title]', title);
                     newLi = $(newLi);
@@ -148,6 +214,7 @@ function updateNoteAction() {
                     li.find('a').addClass('checked');
                 }
                 //关闭对话框 TODO 关闭对话框还没写。
+                closeDialog();
             });
         } else {
             alert(result.message);
@@ -156,8 +223,8 @@ function updateNoteAction() {
 }
 
 function test() {
-    var a =5;
+    var a = 5;
     var b = 6;
-    var c = a+b;
+    var c = a + b;
     console.log(c);
 }

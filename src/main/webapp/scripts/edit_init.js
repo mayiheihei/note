@@ -7,13 +7,20 @@ $(function () {
     console.log(userId);
     // 网页加载以后立即加载笔记本列表信息
     loadNotebooksAction();
-
+    //点击#add_notebook时候打开添加笔记本对话框---------开始------------
     $("#add_notebook").click(openAddNotebookDialog);
     // 绑定笔记本对话框中的添加笔记本按钮事件
     $("#can").on("click", ".add-notebook", addNotebookAction);
     // 利用事件冒泡，在can上绑定关闭按钮
     $("#can").on("click", ".close,.cancel", closeDialog);
+    //点击#add_notebook时候打开添加笔记本对话框---------结束------------
 
+    //点击#add_note时候，打开添加笔记对话框---------开始------------
+    $("#add_note").click(openAddNoteDialog);
+    //打开对话框后，绑定笔记对话框的创建笔记按钮事件
+    $("#can").on("click",".add-note",addNoteAction);
+
+    //点击#add_note时候，打开添加笔记对话框---------结束------------
 
     //绑定笔记本列表点击事件
     $("#notebooks").on("click", "li", showNotesAction);
@@ -32,25 +39,27 @@ $(function () {
 
     //显示回收站
     $("#rollback_button").click(switchRollback);
-    
-    //绑定显示笔记自惨淡的弹出事件
-    $('#pc_part_2').on('click','li .btn_slide_down',showNoteSubMenu);
+
+    //绑定显示笔记子菜单的弹出事件
+    $('#pc_part_2').on('click', 'li .btn_slide_down', showNoteSubMenu);
 
     //关闭子菜单
-    $('body').click(hideNoteSubMenu);/*注释1号：为什么点击下拉不出那三个按钮狂，
-    因为点击弹出时候，冒泡事件传播到此方法，又会关闭，所以需要false*/
+    $('body').click(hideNoteSubMenu);
+    /*注释1号：为什么点击下拉不出那三个按钮狂，
+     因为点击弹出时候，冒泡事件传播到此方法，又会关闭，所以需要false*/
 
     //绑定删除笔记按钮事件
-    $('pc_part_2 ul').on('click','li .btn_delete',deleteNoteAction);
+    $('pc_part_2 ul').on('click', 'li .btn_delete', deleteNoteAction);
 });
 
-function deleteNoteAction(){
+function deleteNoteAction() {
     var btn = $(this);
     var id = btn.parents('li').first().data('noteId');
     //ajax
-    console.log('删除'+id);
+    console.log('删除' + id);
 }
 
+//通用关闭对话框
 function closeDialog() {
     $("#can").empty();
     $(".opacity_bg").hide();
@@ -78,7 +87,7 @@ function switchRollback() {
     }
 }
 
-
+//滑动下拉框
 function showNoteSubMenu() {
     var btn = $(this);
     btn.parent().next().toggle(200)//.show();

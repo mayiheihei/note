@@ -44,14 +44,14 @@ function showNotebooks(notebooks) {
 		var notebook = notebooks[i];
 		// 3、为每个notebook创建一个li,将模版[name]替换为笔记本名即为li
 		var li = notebookTemplate.replace("[name]", notebook.name);
-		console.log(li);
+		// console.log("第一个"+li);
+		//绑定并进行对象转换，从dom对象转成了jquery对象。（有待确定）
 		li = $(li).data("notebookId",notebook.id);
+		// console.log("第二个"+li);
 		// 4、将li添加到ul
 		$("#notebooks").append(li);
 	}
-	
-	
-	
+
 }
 
 //TM自己添加

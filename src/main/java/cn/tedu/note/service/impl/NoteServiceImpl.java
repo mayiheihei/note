@@ -2,28 +2,31 @@ package cn.tedu.note.service.impl;
 
 import cn.tedu.note.dao.NoteDao;
 import cn.tedu.note.dao.NotebookDao;
+import cn.tedu.note.dao.UserDao;
+import cn.tedu.note.entity.Note;
 import cn.tedu.note.entity.Notebook;
+import cn.tedu.note.entity.User;
 import cn.tedu.note.service.NoteNotFoundException;
 import cn.tedu.note.service.NoteService;
 import cn.tedu.note.service.NotebookNotFoundException;
+import cn.tedu.note.service.UserNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service("noteService")
 //@Transactional //可以直接加到类上，这样所有方法都成了事务
 public class NoteServiceImpl implements NoteService {
-
     @Resource
     private NoteDao noteDao;
 
     @Resource
     private NotebookDao notebookDao;
+
+    @Resource
+    private UserDao userDao;
 
     public List<Map<String, Object>> listNotes(String notebookId) throws NotebookNotFoundException {
         if (notebookId == null || notebookId.trim().isEmpty()) {
@@ -93,9 +96,9 @@ public class NoteServiceImpl implements NoteService {
     @Transactional
     public int deleteNotes(String... ids) {
         //String... 就是String[]
-        for (String id :ids) {
+        for (String id : ids) {
             int n = noteDao.deleteNote(id);
-            if(n!=1){
+            if (n != 1) {
                 throw new NoteNotFoundException(id);
             }
         }
@@ -103,39 +106,74 @@ public class NoteServiceImpl implements NoteService {
         return ids.length;
     }
 
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public List<Map<String, Object>>
     listNotes(String notebookId, int page)
             throws NotebookNotFoundException {
 
-        if(notebookId==null || notebookId.trim().isEmpty()){
+        if (notebookId == null || notebookId.trim().isEmpty()) {
             throw new NotebookNotFoundException("ID NULL");
         }
-        Notebook book=notebookDao.findNotebookById(notebookId);
-        if(book==null){
+        Notebook book = notebookDao.findNotebookById(notebookId);
+        if (book == null) {
             throw new NotebookNotFoundException("ID错误");
         }
         //计算分页参数
         int size = 6;
         int start = page * size;
         //检查start是否有效
-        if(start < 0){
+        if (start < 0) {
             start = 0;
         }
         int max =
                 noteDao.countNotes(notebookId);
-        if(start>=max){
+        if (start >= max) {
             return new
-                    ArrayList<Map<String,Object>>();
+                    ArrayList<Map<String, Object>>();
         }
         //拼凑参数
-        Map<String, Object> map=
+        Map<String, Object> map =
                 new HashMap<String, Object>();
         map.put("notebookId", notebookId);
         map.put("start", start);
         map.put("size", size);
         //分页查询
         return noteDao.findNotesByNotebookIdPaged(map);
+    }
+
+    @Override
+    public Note saveNote(String userId, String notebookId, String title) {
+        if(notebookId==null||notebookId.trim().isEmpty()){
+            throw new NotebookNotFoundException("notebookId不能为空");
+        }
+
+        Notebook book = notebookDao.findNotebookById(notebookId);
+        if(book == null){
+            throw new NotebookNotFoundException("notebookId不存在");
+        }
+        if(userId==null||userId.trim().isEmpty()){
+            throw new UserNotFoundException("userId不能空");
+        }
+        User user = userDao.findUserById(userId);
+        if(user == null){
+            throw new UserNotFoundException("userId不存在");
+        }
+        if(title==null || title.trim().isEmpty()){
+            throw new RuntimeException("title不存在");
+        }
+        String id = UUID.randomUUID().toString();
+        title = title.trim();
+        String body = "";
+        int typeId=0;
+        int statusId=0;
+        //long now = System.currentTimeMillis();
+        Note note = new Note(id, notebookId, userId, statusId, typeId, title, body);
+        int n = noteDao.saveNote(note);
+        if( n == 1){
+
+            return note;
+        }
+        throw new RuntimeException("保存失败!");
     }
 
 }

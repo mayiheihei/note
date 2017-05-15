@@ -1,5 +1,8 @@
 package cn.tedu.note.service;
 
+
+import cn.tedu.note.entity.Note;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,4 +18,6 @@ public interface NoteService {
     int deleteNotes(String... ids);
 
     List<Map<String, Object>> listNotes(String notebookId, int page) throws NotebookNotFoundException;
+
+    Note saveNote(String userId, String notebookId, String title);
 }

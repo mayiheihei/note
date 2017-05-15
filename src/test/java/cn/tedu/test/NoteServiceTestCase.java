@@ -60,4 +60,10 @@ public class NoteServiceTestCase extends BaseTestCase {
 		//String... 当方法中有多个参数，只能放最后一个参数，而且只能有一个，不能有第二个
 		int n = service.deleteNotes(id1,id2);
 	}
+
+	@Test
+	public void testSaveNote(){
+
+		//service.saveNote(userId,notebookId,title);
+	}
 }

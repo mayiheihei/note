@@ -1,5 +1,6 @@
 package cn.tedu.note.web;
 
+import cn.tedu.note.entity.Note;
 import cn.tedu.note.service.NoteService;
 import cn.tedu.note.util.JsonResult;
 import org.springframework.stereotype.Controller;
@@ -36,5 +37,12 @@ public class NoteController extends BaseController {
     public JsonResult<Boolean> myUpdate(String noteId, String title, String body) {
         boolean b = noteService.updateNote(noteId, title, body);
         return new JsonResult<Boolean>(b);
+    }
+
+    @RequestMapping("/add.do")
+    @ResponseBody
+    public JsonResult<Note> addNote(String userId,String notebookId,String title){
+    Note note = noteService.saveNote(userId,notebookId,title);
+    return new JsonResult<Note>(note);
     }
 }

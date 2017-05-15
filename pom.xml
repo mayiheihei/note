@@ -5,9 +5,6 @@
   <artifactId>note</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-    <modules>
-        <module>ssh01</module>
-    </modules>
     <name>note Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <dependencies>
