@@ -41,15 +41,18 @@ $(function () {
     $("#rollback_button").click(switchRollback);
 
     //绑定显示笔记子菜单的弹出事件
+    /*注意这里能不能把li放前面，视频中，老师刚开始全放前面的，后来放后面。能不能把li放前面？
+        答：不能放前面，可以把ul放前面，因为li是动态生成的，而pc_part_2 和ul都是固定的，jquery的选择器只能选到固定的，再由on的第二参
+        数选到动态生成的元素上。*/
     $('#pc_part_2').on('click', 'li .btn_slide_down', showNoteSubMenu);
 
-    //关闭子菜单
-    $('body').click(hideNoteSubMenu);
-    /*注释1号：为什么点击下拉不出那三个按钮狂，
-     因为点击弹出时候，冒泡事件传播到此方法，又会关闭，所以需要false*/
-
     //绑定删除笔记按钮事件
-    $('pc_part_2 ul').on('click', 'li .btn_delete', deleteNoteAction);
+    $('#pc_part_2 ul').on('click', 'li .btn_delete', deleteNoteAction);
+
+    //关闭子菜单
+    /*注释1号：为什么点击下拉不出那三个按钮狂，
+     因为点击弹出时候，click事件传播到此方法，又会关闭，所以需要false*/
+    $('body').click(hideNoteSubMenu);
 });
 
 function deleteNoteAction() {
@@ -90,10 +93,11 @@ function switchRollback() {
 //滑动下拉框
 function showNoteSubMenu() {
     var btn = $(this);
-    btn.parent().next().toggle(200)//.show();
-    return false;//注释1号关联
+    // console.log(this);
+    btn.parent().next().toggle(200);//.show();
+    return false;//阻断冒泡传播，阻止click事件传播，防止触发关闭下拉方法：注释1号关联
 }
 
 function hideNoteSubMenu() {
-    $('#pc_part_2 note_menu').hide(200);
+    $('#pc_part_2 .note_menu').hide(200);
 }

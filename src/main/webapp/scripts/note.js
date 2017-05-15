@@ -121,12 +121,12 @@ function showNotes(notes) {
     // 派生选择器找到ul
     var ul = $("#pc_part_2 ul");
     ul.empty();
-    console.log(ul);
+    // console.log(ul);
     for (var i = 0; i < notes.length; i++) {
         var note = notes[i];
         var li = noteTemplate.replace("[title]", note.title);
         /*li = "<li>我是测试</li>"  如果li中直接写html字符串,就等价于$(this)*/
-        console.log(li);
+        // console.log(li);
         li = $(li).data("noteId", note.id);
         ul.append(li);
     }
